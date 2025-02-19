@@ -153,10 +153,14 @@ class ModelAdminReorder(MiddlewareMixin):
         try:
             app_list = response.context_data['app_list']
         except KeyError:
-            # there is no app_list! nothing to reorder
-            return response
-
+            try:
+                # this is for the navbar
+                app_list = response.context_data['available_apps']
+            except KeyError:
+                # there is no app_list! nothing to reorder
+                return response
         self.init_config(request, app_list)
         ordered_app_list = self.get_app_list()
         response.context_data['app_list'] = ordered_app_list
+        response.context_data['available_apps'] = ordered_app_list
         return response
